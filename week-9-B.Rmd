@@ -1,0 +1,72 @@
+---
+title: "Week 9, Day 2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(PPBDS.data)
+library(rstanarm)
+library(tidyverse)
+
+# There is one change to our data from Tuesday. We have a created a new
+# variable: `poverty_n`, where the "n" stands for "normalized." To normalize data
+# is to subtract the mean and divide by the standard deviation. This can be
+# helpful. The coefficient to such a variable can be interpreted as a comparison
+# between two groups, separated by a one standard deviation of the poverty
+# measure.
+
+
+week_9 <- kenya %>% 
+  rename(reg_chg = reg_byrv13) %>% 
+  filter(treatment %in% c("control", "local")) %>% 
+  droplevels() %>% 
+  mutate(poverty_n = (poverty - mean(poverty))/sd(poverty)) %>% 
+  select(poll_station, reg_chg, treatment, poverty_n, poverty)
+  
+```
+
+
+## Scene 1
+
+**Prompt:** Let's create a new model. Consider `reg_chg` as a function of `treatment`, `poverty_n` and the interaction between the two.
+
+* Write the math for this model.
+
+* Describe the population for which you are creating the model.
+
+* Fit the  model and interpret the coefficients. Focus on the coefficient of the interaction term.
+
+
+
+
+## Scene 2
+
+**Prompt:** Let's begin with a question from Kenyan President Uhuru Kenyatta:
+
+*Consider the polling station 007/001. What are the chances of an increase in registration of 4% if I were to give it the local treatment in January?*
+
+Write a sentence or two for each of these topics:
+
+* What would Wisdom suggest about the use of the `kenya` data to answer this question?
+
+* Describe the ideal Preceptor Table.
+
+* Graph the posterior probability distribution `reg_chg` if polling station 007/001 were to be assigned treatment in January.
+
+* Answer the President's question.
+
+
+
+
+## Scene 3
+
+
+**Prompt:**  President Kenyatta has another question:
+
+*I care more about increasing registration in poor communities. For a community with poverty_n equal to 2, what would you expect the change in registration under treatment to be?*
+
+Using the model which you created in Scene 1, create a graphic of the posterior probability distribution of the causal effect of `local` treatment in polling stations which have +2 sigma poverty rates. Note that there are two ways to do this. First, we can use a parameter approach. This is what we did in class last week. Second, we can use `posterior_epred()`, which is generally easier since it does the math for us. Use the `posterior_epred()` approach. 
+
+
+
