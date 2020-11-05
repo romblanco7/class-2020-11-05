@@ -33,11 +33,30 @@ week_9 <- kenya %>%
 
 * Write the math for this model.
 
+$$ reg\_chg = \beta_0 + \beta_1 x_{t,i} + \beta_2 x_{p,i} + \beta_2 x_{t*p} + \epsilon_i$$
+
 * Describe the population for which you are creating the model.
+
+```{r}
+# Our population will include all Kenyan's
+```
+
 
 * Fit the  model and interpret the coefficients. Focus on the coefficient of the interaction term.
 
 
+```{r}
+fit_obj <- stan_glm(data = week_9,
+                    formula = reg_chg ~ treatment*poverty_n, 
+                    family = gaussian(),
+                    refresh = 0)
+
+print(fit_obj, digits = 5)
+
+# The median of our intercept (.00423) represents the median of our estimated posterior # The distribution for the average reg_chg (registration change) as a function of poverty_n and treatment when both of the predictors are held 0
+# treatmentlocal median average between treatment and control group when poverty_n is equal to zero. 
+# Poverty_n median represents the average change reg_chg when treatment local is held at 0  
+```
 
 
 ## Scene 2
@@ -50,13 +69,33 @@ Write a sentence or two for each of these topics:
 
 * What would Wisdom suggest about the use of the `kenya` data to answer this question?
 
+The data data in `Kenya` dataset is related to what is being asked in the question and thus can be helpful in estimating the increase in registration in station 007/001. However, one limitation this data has is that we don't know what time period the data is coming from.
+
 * Describe the ideal Preceptor Table.
+
+The ideal PT would have treatment and control imposed on each polling station and predictive outcome for each individual station. There'd be a monthly observation for each month, particularly January. 
+
 
 * Graph the posterior probability distribution `reg_chg` if polling station 007/001 were to be assigned treatment in January.
 
+```{r}
+new_obs <- tibble(treatment = "local", 
+                  poverty_n = -1.60835093)
+
+                 pp <- posterior_predict(fit_obj, new_obs) %>%
+                   as_tibble() %>%
+                   mutate(as.numeric()) %>%
+                   rename(predictions = `1`)
+                   ggplot(aes(x = )) +
+                     geom_histogram(aes(y = after_stat(count/sum(count))))
+                   
+              
+
+kenya
+```
+
+
 * Answer the President's question.
-
-
 
 
 ## Scene 3
